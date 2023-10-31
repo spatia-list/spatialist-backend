@@ -29,12 +29,9 @@ class PostIt:
     type: str = ""
     text_content: str = ""
     media_content: str = ""
-    scale: float = 1.0
-    rot_x: float = 0.0
-    rot_y: float = 0.0
-    rot_z: float = 0.0
+    rgb = None
 
-    def __init__(self, anchor_id, owner, title, type, scale, rot_x, rot_y, rot_z, text_content='', media_content=''):
+    def __init__(self, anchor_id, owner, title, type, text_content='', media_content='', rgb=None):
         self.id = uid().hex
         self.anchor_id = anchor_id
         self.owner = owner
@@ -42,10 +39,7 @@ class PostIt:
         self.type = type
         self.text_content = text_content
         self.media_content = media_content
-        self.scale = scale
-        self.rot_x = rot_x
-        self.rot_y = rot_y
-        self.rot_z = rot_z
+        self.rgb = rgb
 
     def check(self):
         if not self.anchor_id:
@@ -65,6 +59,19 @@ class PostIt:
         if self.type == "media" and not self.media_content:
             raise Exception("media_content is required for media type")
 
+        if self.rgb:
+            # check that we have 3 values
+            if len(self.rgb) != 3:
+                raise Exception("rgb must be an array of 3 values")
+
+            # check that each value is an integer between 0 and 255
+            for val in self.rgb:
+                if not isinstance(val, int):
+                    raise Exception("rgb values must be integers")
+                if val < 0 or val > 255:
+                    raise Exception("rgb values must be between 0 and 255")
+        else:
+            self.rgb = [0, 255, 255]
 
     def save(self):
         self.check()
@@ -80,10 +87,7 @@ class PostIt:
             "type": self.type,
             "text_content": self.text_content,
             "media_content": self.media_content,
-            "scale": self.scale,
-            "rot_x": self.rot_x,
-            "rot_y": self.rot_y,
-            "rot_z": self.rot_z
+            "rgb": self.rgb
         }
         return item
 
@@ -98,9 +102,7 @@ class PostItJSON(BaseModel):
     text_content: str = ""
     media_content: str = ""
     scale: float = 1.0
-    rot_x: float = 0.0
-    rot_y: float = 0.0
-    rot_z: float = 0.0
+    rgb: list | None = [0, 255, 255]
 
     def deserialize(self):
         return PostIt(
@@ -110,10 +112,7 @@ class PostItJSON(BaseModel):
             type=self.type,
             text_content=self.text_content,
             media_content=self.media_content,
-            scale=self.scale,
-            rot_x=self.rot_x,
-            rot_y=self.rot_y,
-            rot_z=self.rot_z
+            rgb=self.rgb
         )
 
 
