@@ -1,0 +1,8 @@
+version: '3'
+services:
+  spatialist-backend:
+    build: .
+    image: spatialist-backend
+    ports:
+      - "8000:8000"
+    container_name: spatialist-backend
