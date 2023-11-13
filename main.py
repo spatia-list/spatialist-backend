@@ -74,3 +74,13 @@ GET /postits
 async def get_postits():
     postits = CNX.get_postits()
     return {"postits": postits}
+
+
+"""
+GET /postits/{anchor_id}
+"""
+
+@app.get("/postits/{anchor_id}")
+async def get_postits_by_anchor(anchor_id: str):
+    postits = CNX.get_postits_anchor(anchor_id)
+    return {"postits": postits}
