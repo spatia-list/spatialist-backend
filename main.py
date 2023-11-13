@@ -3,6 +3,11 @@ from models import *
 
 app = FastAPI()
 
+# add 0.0.0.0 to allowed hosts
+
+
+
+
 
 @app.get("/")
 async def root():

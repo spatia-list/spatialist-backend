@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from uuid import uuid4 as uid
 
 from pydantic import BaseModel
@@ -11,10 +12,62 @@ CONNECTION SETTINGS
 
 CNX = Connector()
 
-"""
-Define a post-it note model
-"""
+@dataclass
+class Quaternion:
+    x: float
+    y: float
+    z: float
+    w: float
 
+    def serialize(self):
+        return {
+            "w": self.w,
+            "x": self.x,
+            "y": self.y,
+            "z": self.z
+        }
+
+    def __str__(self):
+        return json.dumps(self.serialize())
+
+    def __repr__(self):
+        return self.__str__()
+
+@dataclass
+class Vector3:
+    x: float
+    y: float
+    z: float
+
+    def serialize(self):
+        return {
+            "x": self.x,
+            "y": self.y,
+            "z": self.z
+        }
+
+    def __str__(self):
+        return json.dumps(self.serialize())
+
+    def __repr__(self):
+        return self.__str__()
+
+@dataclass
+class Pose:
+    position: Vector3
+    orientation: Quaternion
+
+    def serialize(self):
+        return {
+            "position": self.position.serialize(),
+            "orientation": self.orientation.serialize()
+        }
+
+    def __str__(self):
+        return json.dumps(self.serialize())
+
+    def __repr__(self):
+        return self.__str__()
 
 class PostIt:
     """
@@ -30,8 +83,9 @@ class PostIt:
     text_content: str = ""
     media_content: str = ""
     rgb = None
+    pose: Pose = None
 
-    def __init__(self, anchor_id, owner, title, type, text_content='', media_content='', rgb=None):
+    def __init__(self, anchor_id, owner, title, type, pose, text_content='', media_content='', rgb=None):
         self.id = uid().hex
         self.anchor_id = anchor_id
         self.owner = owner
@@ -40,6 +94,7 @@ class PostIt:
         self.text_content = text_content
         self.media_content = media_content
         self.rgb = rgb
+        self.pose = pose
 
     def check(self):
         if not self.anchor_id:
@@ -87,7 +142,8 @@ class PostIt:
             "type": self.type,
             "text_content": self.text_content,
             "media_content": self.media_content,
-            "rgb": self.rgb
+            "rgb": self.rgb,
+            "pose": self.pose.serialize() if self.pose else None
         }
         return item
 
@@ -103,8 +159,23 @@ class PostItJSON(BaseModel):
     media_content: str = ""
     scale: float = 1.0
     rgb: list | None = [0, 255, 255]
+    position: list | None = [0.0, 0.0, 0.0]
+    rotation: list | None = [0.0, 0.0, 0.0, 1.0]
 
     def deserialize(self):
+        pose = Pose(
+            position=Vector3(
+                x=self.position[0],
+                y=self.position[1],
+                z=self.position[2]
+            ),
+            orientation=Quaternion(
+                x=self.rotation[0],
+                y=self.rotation[1],
+                z=self.rotation[2],
+                w=self.rotation[3]
+            )
+        )
         return PostIt(
             anchor_id=self.anchor_id,
             owner=self.owner,
@@ -112,7 +183,8 @@ class PostItJSON(BaseModel):
             type=self.type,
             text_content=self.text_content,
             media_content=self.media_content,
-            rgb=self.rgb
+            rgb=self.rgb,
+            pose=pose
         )
 
 

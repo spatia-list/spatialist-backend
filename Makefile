@@ -5,7 +5,7 @@ build:
 	docker build -t spatialist-backend .
 
 local: build
-	docker run -d -p 80:8000 spatialist-backend:latest
+	docker run -d -p 8000:8000 spatialist-backend:latest
 
 release: build
 	docker --context spatialist-backend run -d spatialist-backend
