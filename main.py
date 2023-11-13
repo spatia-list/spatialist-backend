@@ -32,6 +32,18 @@ async def create_postit(data: PostItJSON):
 
 
 """
+DEL /postit
+"""
+
+@app.delete("/postit/{id}")
+async def delete_postit(id: str):
+    try:
+        CNX.delete_postit(id)
+    except Exception as e:
+        return {"message": "PostIt not deleted::" + str(e)}
+    return {"message": "PostIt deleted"}
+
+"""
 POST /joingroup
 """
 
