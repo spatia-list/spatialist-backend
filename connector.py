@@ -43,3 +43,30 @@ class Connector:
         )
 
         return list(res)
+
+    def get_postits_anchor(self, anchor_id):
+        container = self.get_container("spatialist_postits")
+        res = container.query_items(
+            query=f"SELECT * FROM c WHERE c.anchor_id = '{anchor_id}'",
+            enable_cross_partition_query=True
+        )
+
+        return list(res)
+
+    def delete_postit(self, id):
+        container = self.get_container("spatialist_postits")
+        targets = container.query_items(
+            query=f"SELECT * FROM c WHERE c.id = '{id}'",
+            enable_cross_partition_query=True
+        )
+        res = list(targets)
+        print(res)
+        if len(res) == 0:
+            print("PostIt not found")
+            raise Exception("PostIt not found")
+
+        for target in res:
+            print("deleting the item with id: " + target["id"] + " and owner: " + target["owner"])
+            container.delete_item(target, partition_key=target["owner"])
+
+

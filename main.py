@@ -3,6 +3,11 @@ from models import *
 
 app = FastAPI()
 
+# add 0.0.0.0 to allowed hosts
+
+
+
+
 
 @app.get("/")
 async def root():
@@ -25,6 +30,18 @@ async def create_postit(data: PostItJSON):
     data.deserialize().save()
     return {"message": "PostIt created"}
 
+
+"""
+DEL /postit
+"""
+
+@app.delete("/postit/{id}")
+async def delete_postit(id: str):
+    try:
+        CNX.delete_postit(id)
+    except Exception as e:
+        return {"message": "PostIt not deleted::" + str(e)}
+    return {"message": "PostIt deleted"}
 
 """
 POST /joingroup
@@ -56,4 +73,14 @@ GET /postits
 @app.get("/postits")
 async def get_postits():
     postits = CNX.get_postits()
+    return {"postits": postits}
+
+
+"""
+GET /postits/{anchor_id}
+"""
+
+@app.get("/postits/{anchor_id}")
+async def get_postits_by_anchor(anchor_id: str):
+    postits = CNX.get_postits_anchor(anchor_id)
     return {"postits": postits}
