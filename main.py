@@ -32,6 +32,16 @@ async def create_postit(data: PostItJSON):
 
 
 """
+POST /anchor
+"""
+
+
+@app.post("/anchor")
+async def create_anchor(data: LocalAnchorJSON):
+    data.deserialize().save()
+    return {"message": "Anchor created"}
+
+"""
 DEL /postit
 """
 
@@ -84,3 +94,19 @@ GET /postits/{anchor_id}
 async def get_postits_by_anchor(anchor_id: str):
     postits = CNX.get_postits_anchor(anchor_id)
     return {"postits": postits}
+
+
+"""
+GET /anchors/{username}
+"""
+@app.get("/anchors/{username}")
+async def get_anchors_by_username(username: str):
+    anchors = CNX.get_anchors_by_username(username)
+    return {"anchors": anchors}
+
+"""
+GET /currentHash
+"""
+@app.get("/currentHash")
+async def get_current_hash():
+    return {"hash": CNX.get_postits_hash()}

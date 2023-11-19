@@ -1,5 +1,6 @@
 import os
 import json
+import hashlib
 from uuid import uuid4 as uid
 
 from azure.cosmos import CosmosClient
@@ -69,4 +70,38 @@ class Connector:
             print("deleting the item with id: " + target["id"] + " and owner: " + target["owner"])
             container.delete_item(target, partition_key=target["owner"])
 
+    def get_anchors_by_username(self, username):
+        """
+        For now, simply return all created anchors
+        :param username:
+        :return:
+        """
+
+        container = self.get_container("spatialist_anchors")
+        # get all items
+        res = container.query_items(
+            query="SELECT * FROM c",
+            enable_cross_partition_query=True
+        )
+
+        return list(res)
+
+    def get_postits_hash(self):
+        """
+        Calculate a hash the modification time
+        :return:
+        """
+
+        container = self.get_container("spatialist_postits")
+        # get only the most recent item
+        res = container.query_items(
+            query="SELECT TOP 1 * FROM c ORDER BY c._ts DESC",
+            enable_cross_partition_query=True
+        )
+        res = list(res)
+
+        # calculate sha256
+        sha256 = hashlib.sha256()
+        sha256.update(json.dumps(res).encode("utf-8"))
+        return sha256.hexdigest()
 
