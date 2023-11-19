@@ -225,4 +225,51 @@ class UserGroupJoinJSON(BaseModel):
 
         return group
 
+class LocalAnchor:
+    """
+    A local anchor
+    """
+    container_name = "spatialist_anchors"
+
+    id: str = None
+    anchor_id: str = ""
+    owner: str = ""
+
+    def __init__(self, anchor_id, owner):
+        self.id = uid().hex
+        self.anchor_id = anchor_id
+        self.owner = owner
+
+    def check(self):
+        if not self.anchor_id:
+            raise Exception("anchor_id is required")
+        if not self.owner:
+            raise Exception("owner is required")
+
+    def save(self):
+        self.check()
+        CNX.create_item(self)
+        return self
+
+    def serialize(self):
+        item = {
+            "id": self.id,
+            "anchor_id": self.anchor_id,
+            "owner": self.owner
+        }
+        return item
+
+    def __str__(self):
+        return json.dumps(self.serialize())
+
+class LocalAnchorJSON(BaseModel):
+    anchor_id: str = ""
+    owner: str = ""
+
+    def deserialize(self):
+        return LocalAnchor(
+            anchor_id=self.anchor_id,
+            owner=self.owner
+        )
+
 
