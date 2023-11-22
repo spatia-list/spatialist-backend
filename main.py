@@ -1,18 +1,21 @@
 from fastapi import FastAPI
 from models import *
+from fastapi.staticfiles import StaticFiles
+from starlette.responses import FileResponse
+from fastapi.templating import Jinja2Templates
+
 
 app = FastAPI()
-
-# add 0.0.0.0 to allowed hosts
-
-
-
-
+templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return FileResponse('static/index.html')
 
+@app.get("/swipe")
+async def root():
+    return FileResponse('static/swipe.html')
 
 @app.get("/hello/{name}")
 async def say_hello(name: str):
@@ -38,6 +41,7 @@ POST /anchor
 
 @app.post("/anchor")
 async def create_anchor(data: LocalAnchorJSON):
+    print(data)
     data.deserialize().save()
     return {"message": "Anchor created"}
 

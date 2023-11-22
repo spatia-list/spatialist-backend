@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpatiaList - Upload</title>
+    <!-- Include the Tailwind JS file -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+
+</head>
+<body class="bg-gray-700">
+
+<nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6">
+  <div class="flex items-center flex-shrink-0 text-white mr-6">
+    <svg class="fill-current h-8 w-8 mr-2" width="54" height="54" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z"/></svg>
+    <span class="font-semibold text-xl tracking-tight">SpatiaList</span>
+  </div>
+
+  <div class="flex-grow flex items-center w-auto place-center">
+    <div class="text-sm flex-grow">
+      <a href="/" class="block inline-block mt-0 text-teal-200 hover:text-white mr-4 text-lg">
+        Home
+      </a>
+      <a href="/swipe" class="block inline-block mt-0 text-teal-200 hover:text-white mr-4 text-lg">
+        Swipe
+      </a>
+
+    </div>
+    <div>
+      <a href="#" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-0">Github</a>
+    </div>
+  </div>
+</nav>
+<div class="p-4">
+
+  <form class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div class="mb-4">
+      <label class="block text-gray-100 text-md font-bold mb-2" for="username">
+        Username
+      </label>
+      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Enter username">
+    </div>
+    <div class="mb-6">
+      <label class="block text-gray-100 text-md font-bold mb-2" for="password">
+        Content Type
+      </label>
+      <select id="countries" class=" border rounded text-gray-200 block w-full p-3 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-teal-500 focus:border-teal-500 my-4">
+        <option selected value="text">Text</option>
+        <option value="media">Media</option>
+      </select>
+    </div>
+    <div class="mb-6">
+      <label class="block text-gray-700 dark:text-gray-100 text-md font-bold mb-2" for="password">
+        Content
+      </label>
+      <textarea class="resize-y rounded-md w-full text-md p-3 border-gray-400" style="min-height: 50vh"></textarea>
+    </div>
+  </form>
+
+
+
+
+</div>
+
+<div id="launcher" class=" rounded-t-lg fixed bottom-0 w-full p-3 content-center" style="height: 100px; background-color: rgb(250, 205, 146);" data-role="touch" data-on-swipe-status="mySwipeFunction">
+  <div id="swiper" class="grid grid-cols-1">
+    <div class="bg-gray-400 rounded place-self-center" style="width: 100px; height: 7px"></div>
+    <div class="bg-gray-400 rounded place-self-center my-1" style="width: 100px; height: 7px"></div>
+    <div class="text-gray-700 rounded place-self-center text-2xl mt-5">
+      Swipe up to create!
+    </div>
+  </div>
+  <div id="createMessage" class="grid grid-cols-1 hidden">
+    <div class="text-gray-700 rounded place-self-center text-2xl mt-5">
+      Post It Created!
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.metroui.org.ua/current/metro.js"></script>
+
+<script>
+
+    const launcher = document.getElementById("launcher");
+    const swiper = document.getElementById("swiper");
+    const createMessage = document.getElementById("createMessage");
+    var launched = false;
+    const w_height = window.innerHeight;
+    const jsConfetti = new JSConfetti();
+
+    function mySwipeFunction(...args){
+        const curr_size = (200 + args[3]);
+
+        if (launched) return;
+        if(args[1] === "move"){
+            console.log(args[3])
+            launcher.style.height = curr_size + "px";
+            launcher.style.backgroundColor = "rgb(250, 205," + (146 + args[3] / 10) + ")";
+
+        } else if(args[1] === "end"){
+            launcher.style.transition = "all 0.5s";
+            launcher.style.height = "200px";
+            launcher.style.backgroundColor = "rgb(250, 205, 146)";
+            setTimeout(() => {
+                launcher.style.transition = "none";
+            }, 500);
+
+        }
+        if (curr_size > w_height/1.5){
+          launched = true;
+          launcher.style.transition = "all 0.5s";
+          swiper.style.transition = "all 0.5s";
+          // remove hidden class
+          createMessage.classList.remove("hidden");
+          swiper.style.display = "none";
+          launcher.style.height = w_height + "px";
+          launcher.style.backgroundColor = "rgb(250, 205, 146)";
+          jsConfetti.addConfetti({
+            confettiRadius: 6,
+            confettiNumber: 2000,
+          })
+        }
+
+
+    }
+</script>
+
+</body>
+</html>

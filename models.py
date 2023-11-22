@@ -257,6 +257,7 @@ class LocalAnchor:
             "anchor_id": self.anchor_id,
             "owner": self.owner
         }
+        print(item)
         return item
 
     def __str__(self):

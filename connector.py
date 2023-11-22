@@ -25,6 +25,7 @@ class Connector:
     def create_item(self, item):
         new_item = item.serialize()
         container = self.get_container(item.container_name)
+        print(new_item)
         container.create_item(new_item)
 
     def get_groups(self):
