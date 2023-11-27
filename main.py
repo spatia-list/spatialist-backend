@@ -107,7 +107,7 @@ async def get_postits_by_anchor(anchor_id: str):
 
 
 """
-GET /anchors/{username}
+GET /anchors/{group}
 """
 
 
