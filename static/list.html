@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpatiaList - List Post-its</title>
+    <!-- Include the Tailwind JS file -->
+
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+    <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+    <style>
+        html, body {
+            overflow: hidden;
+          }
+      </style>
+</head>
+
+<body class="bg-gray-700">
+
+    <nav class="sticky top-0 flex items-center justify-center flex-wrap bg-teal-500 p-6">
+        <div class="flex items-center flex-shrink-0 text-white mr-6">
+          <svg class="fill-current h-8 w-8 mr-2" width="54" height="54" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z"/></svg>
+          <span class="font-semibold text-xl tracking-tight">SpatiaList</span>
+        </div>
+      
+        <div class="flex-grow flex items-center w-auto place-center">
+          <div class="text-sm flex-grow">
+            <a href="/" class="block inline-block mt-0 text-teal-200 hover:text-white mr-4 text-lg">
+              Home
+            </a>
+
+            <a href="/swipe" class="block inline-block mt-0 text-teal-200 hover:text-white mr-4 text-lg">
+              Swipe
+            </a>
+
+            <a href="/list" class="block inline-block mt-0 text-teal-200 hover:text-white mr-4 text-lg">
+                List
+            </a>
+          </div>
+
+          <div class="flex items-center justify-end">
+            <a href="https://github.com/spatia-list/spatialist-backend" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-0">Github</a>
+          </div>
+        </div>
+    </nav>
+
+    <div class="p-4">
+        <form class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <div class="mb-4">
+            <label class="block text-gray-100 text-md font-bold mb-2" for="username">
+              Username
+            </label>
+            <input id="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter username">
+          </div>
+
+          <button id="showPostItsBtn" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+            Show Post-its
+          </button>
+
+        </form>
+    </div>
+
+    <div class="p-4">
+        <form class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div class="mb-4">
+                <label class="block text-gray-100 text-md font-bold mb-2" for="username">
+                  Available Post-its
+                </label>
+            </div>
+
+            <div id="message" class="text-gray-100 mt-4" style="display: none;"></div>
+            
+            <div id="main"></div>
+        </form>
+    </div>
+
+
+    <script>
+
+
+
+        // Function to handle button click event
+        const loadList = async () => {
+            localStorage.setItem("username", document.getElementById("username").value);
+
+            try {
+                const username = document.getElementById('username').value.trim();
+                if (!username) {
+                    throw new Error('No username!');
+                }
+
+                // Make a GET request to fetch post-its
+                const response = await fetch(`/postits`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch post-its');
+                }
+
+                const data = await response.json();
+                const postits = data['postits'];
+                console.log(postits);
+
+                let message = `You got all the postits for user ${username}:`;
+
+                const mainElement = document.getElementById('main');
+                mainElement.textContent = message;
+                // Change the color and the font of the message
+                mainElement.style.color = 'white';
+                mainElement.style.fontWeight = 'bold';
+                mainElement.style.fontSize = '15px';
+                mainElement.style.marginBottom = '15px';
+
+                // Iterate through postits
+                for (const postit of postits) {
+                    if (postit.owner === username) {
+                        const postitContainer = document.createElement('div');
+
+                        postitContainer.classList.add('bg-yellow-300');
+                        postitContainer.classList.add('rounded');
+                        postitContainer.classList.add('p-4');
+                        postitContainer.classList.add('my-4');
+                        postitContainer.classList.add('text-gray-900');
+                        postitContainer.classList.add('text-md');
+                        postitContainer.classList.add('shadow-md');
+                        
+                        postitContainer.innerHTML = `
+                        <span class="text-lg font-bold">Title: ${postit.title}</span> <br><br>
+                        <span class="text-lg font-bold">Content:</span> <br><br>${postit.text_content}`;
+
+                        mainElement.appendChild(postitContainer);
+                    }
+                }
+
+            } catch (error) {
+                console.error(error);
+                // Handle errors (display an error message or take appropriate action)
+            }
+        };
+
+        // fetch username from local storage
+        const username = localStorage.getItem("username");
+        if (username) {
+          document.getElementById("username").value = username;
+          loadList();
+        }
+
+        document.getElementById('showPostItsBtn').addEventListener('click', loadList);
+    </script>
+
+</body>
+</html>

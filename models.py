@@ -173,7 +173,7 @@ class PostItJSON(BaseModel):
             owner=self.owner,
             title=self.title,
             content_type=self.content_type,
-            content=self.text_content,
+            content=self.content,
             rgb=self.rgb,
             pose=pose
         )
