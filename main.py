@@ -17,6 +17,10 @@ async def root():
 async def root():
     return FileResponse('static/swipe.html')
 
+@app.get("/list")
+async def root():
+    return FileResponse('static/list.html')
+
 @app.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
