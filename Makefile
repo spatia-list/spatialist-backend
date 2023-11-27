@@ -5,8 +5,8 @@ build:
 	docker build -t spatialist-backend .
 
 local: build
+	docker kill $(docker ps -a -q)
 	docker run -d -p 8000:8000 spatialist-backend:latest
 
 release: build
-	docker kill $(docker ps -a -q)
 	docker --context spatialist-backend run -d spatialist-backend
