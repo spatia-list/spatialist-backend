@@ -29,13 +29,13 @@
       <a href="/" class="block inline-block mt-0 text-teal-200 hover:text-white mr-4 text-lg">
         Home
       </a>
-      <a href="/swipe" class="block inline-block mt-0 text-teal-200 hover:text-white mr-4 text-lg">
+      <a href="/swipe" class="block inline-block mt-0 text-teal-200 text-white mr-4 text-lg">
         Swipe
       </a>
 
     </div>
     <div class="flex items-center justify-end">
-      <a href="#" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-0">Github</a>
+      <a href="https://github.com/spatia-list/spatialist" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-0">Github</a>
     </div>
   </div>
 </nav>
@@ -48,11 +48,17 @@
       </label>
       <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Enter username">
     </div>
+    <div class="mb-4">
+      <label class="block text-gray-100 text-md font-bold mb-2" for="title">
+        Title
+      </label>
+      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline" id="title" type="text" placeholder="PostIt Title">
+    </div>
     <div class="mb-6">
-      <label class="block text-gray-100 text-md font-bold mb-2" for="password">
+      <label class="block text-gray-100 text-md font-bold mb-2" for="type">
         Content Type
       </label>
-      <select id="countries" class=" border rounded text-gray-200 block w-full p-3 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-teal-500 focus:border-teal-500 my-4">
+      <select id="type" class=" border rounded text-gray-200 block w-full p-3 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-teal-500 focus:border-teal-500 my-4">
         <option selected value="text">Text</option>
         <option value="media">Media</option>
       </select>
@@ -61,7 +67,7 @@
       <label class="block text-gray-700 dark:text-gray-100 text-md font-bold mb-2" for="password">
         Content
       </label>
-      <textarea class=" rounded-md w-full text-md p-3 border-gray-400" style="height: 20vh"></textarea>
+      <textarea id="content" class=" rounded-md w-full text-md p-3 border-gray-400" style="height: 20vh"></textarea>
     </div>
   </form>
 
@@ -97,13 +103,18 @@
     const w_height = window.innerHeight;
     const jsConfetti = new JSConfetti();
 
+    // fetch username from local storage
+    const username = localStorage.getItem("username");
+    if (username) {
+      document.getElementById("username").value = username;
+    }
+
 
     function mySwipeFunction(...args){
         const curr_size = (60 + args[3]);
 
         if (launched) return;
         if(args[1] === "move"){
-            console.log(args[3])
             launcher.style.height = curr_size + "px";
             launcher.style.backgroundColor = "rgb(250, 205," + (146 + args[3] / 10) + ")";
 
@@ -126,13 +137,44 @@
           launcher.style.height = w_height + "px";
           launcher.style.backgroundColor = "rgb(250, 205, 146)";
           jsConfetti.addConfetti({
-            confettiRadius: 6,
+            confettiRadius: 3,
             confettiNumber: 2000,
           })
+          create();
         }
+    }
 
+    async function create(){
+        const username = document.getElementById("username").value;
+        const title = document.getElementById("title").value;
+        const type = document.getElementById("type").value;
+        const content = document.getElementById("content").value;
+
+        //save the username to local storage
+        localStorage.setItem("username", username);
+
+
+        const data = {
+            username: username,
+            title: title,
+            content_type: type,
+            content: content
+        }
+        const stringified = JSON.stringify(data);
+        console.log(stringified);
+        const response = await fetch('/createFromSwipe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: stringified,
+        });
+
+        const json = await response.json();
+        console.log(json);
 
     }
+
 </script>
 
 </body>
