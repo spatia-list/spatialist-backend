@@ -12,3 +12,4 @@ release: build
 
 k:
 	docker kill $(docker ps -q)
+	make local
