@@ -106,17 +106,21 @@ class Connector:
 
     def get_anchors_by_group(self, group_name):
         """
-        For now return all anchors
+        Return anchors where the owner is the group name
         """
 
         container = self.get_container("spatialist_anchors")
         # get all items
         res = container.query_items(
-            query="SELECT * FROM c",
+            query="SELECT * FROM c WHERE c.owner = " + group_name,
             enable_cross_partition_query=True
         )
 
-        return list(res)
+        # return only 30 items
+        res = list(res)
+        if len(res) > 30:
+            res = res[:30]
+        return res
 
     def get_postits_hash(self):
         """
