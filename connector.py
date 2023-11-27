@@ -137,3 +137,22 @@ class Connector:
         sha256.update(json.dumps(res).encode("utf-8"))
         return sha256.hexdigest()
 
+    def get_anchors_hash(self):
+        """
+        Calculate a hash the modification time
+        :return:
+        """
+
+        container = self.get_container("spatialist_anchors")
+        # get only the most recent item
+        res = container.query_items(
+            query="SELECT TOP 1 * FROM c ORDER BY c._ts DESC",
+            enable_cross_partition_query=True
+        )
+        res = list(res)
+
+        # calculate sha256
+        sha256 = hashlib.sha256()
+        sha256.update(json.dumps(res).encode("utf-8"))
+        return sha256.hexdigest()
+

@@ -130,9 +130,13 @@ GET /currentHash
 """
 
 
-@app.get("/currentHash")
+@app.get("/postitsHash")
 async def get_current_hash():
     return {"hash": CNX.get_postits_hash()}
+
+@app.get("/anchorsHash")
+async def get_anchors_hash():
+    return {"hash": CNX.get_anchors_hash()}
 
 
 """

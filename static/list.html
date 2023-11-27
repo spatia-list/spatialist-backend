@@ -78,8 +78,13 @@
 
 
     <script>
+
+
+
         // Function to handle button click event
-        document.getElementById('showPostItsBtn').addEventListener('click', async () => {
+        const loadList = async () => {
+            localStorage.setItem("username", document.getElementById("username").value);
+
             try {
                 const username = document.getElementById('username').value.trim();
                 if (!username) {
@@ -110,18 +115,18 @@
                 for (const postit of postits) {
                     if (postit.owner === username) {
                         const postitContainer = document.createElement('div');
-                        postitContainer.style.background = 'yellow';
-                        postitContainer.style.width = '50%';
-                        postitContainer.style.color = 'black';
-                        postitContainer.style.borderRadius = '7px';
-                        postitContainer.style.fontWeight = 'normal';
-                        postitContainer.style.fontSize = '13px';
-                        postitContainer.style.padding = '10px';
-                        postitContainer.style.marginBottom = '10px';
+
+                        postitContainer.classList.add('bg-yellow-300');
+                        postitContainer.classList.add('rounded');
+                        postitContainer.classList.add('p-4');
+                        postitContainer.classList.add('my-4');
+                        postitContainer.classList.add('text-gray-900');
+                        postitContainer.classList.add('text-md');
+                        postitContainer.classList.add('shadow-md');
                         
                         postitContainer.innerHTML = `
-                        <strong>Title:</strong> ${postit.title}<br>
-                        <strong>Content:</strong> ${postit.text_content}`;
+                        <span class="text-lg font-bold">Title: ${postit.title}</span> <br><br>
+                        <span class="text-lg font-bold">Content:</span> <br><br>${postit.text_content}`;
 
                         mainElement.appendChild(postitContainer);
                     }
@@ -131,7 +136,16 @@
                 console.error(error);
                 // Handle errors (display an error message or take appropriate action)
             }
-        });
+        };
+
+        // fetch username from local storage
+        const username = localStorage.getItem("username");
+        if (username) {
+          document.getElementById("username").value = username;
+          loadList();
+        }
+
+        document.getElementById('showPostItsBtn').addEventListener('click', loadList);
     </script>
 
 </body>
