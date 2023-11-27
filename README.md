@@ -2,6 +2,8 @@
 
 ### Quickstart
 
+#### Currently deployed on: http://185.224.139.115:8000/
+
 To run the backend, use `make run` (or `make local` to build and run a docker container).
 You might need to manually install dependencies if you choose not to use docker.
 

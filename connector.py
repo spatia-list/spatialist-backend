@@ -37,6 +37,10 @@ class Connector:
 
         return list(res)
 
+    def save_to_buffer(self, item):
+        container = self.get_container("spatialist_swipes")
+        container.create_item(item.serialize())
+
     def get_postits(self):
         container = self.get_container("spatialist_postits")
         res = container.query_items(
@@ -45,6 +49,35 @@ class Connector:
         )
 
         return list(res)
+
+    def get_postits_by_username(self, username):
+        container = self.get_container("spatialist_postits")
+        res = container.query_items(
+            query=f"SELECT * FROM c WHERE c.owner = '{username}'",
+            enable_cross_partition_query=True
+        )
+
+        return list(res)
+
+    def get_swipe_by_username(self, username):
+        container = self.get_container("spatialist_swipes")
+
+        # order by oldest first
+        res = container.query_items(
+            query=f"SELECT * FROM c WHERE c.owner= '{username}' ORDER BY c._ts ASC",
+            enable_cross_partition_query=True
+        )
+        res_list = list(res)
+        if len(res_list) == 0:
+            return {"hasSwipe": False, "postit": None}
+
+        # get the oldest item
+        postit = res_list[0]
+        # delete the item
+        container.delete_item(postit, partition_key=postit["owner"])
+
+        return {"hasSwipe": True, "postit": postit}
+
 
     def get_postits_anchor(self, anchor_id):
         container = self.get_container("spatialist_postits")
@@ -71,11 +104,9 @@ class Connector:
             print("deleting the item with id: " + target["id"] + " and owner: " + target["owner"])
             container.delete_item(target, partition_key=target["owner"])
 
-    def get_anchors_by_username(self, username):
+    def get_anchors_by_group(self, group_name):
         """
-        For now, simply return all created anchors
-        :param username:
-        :return:
+        For now return all anchors
         """
 
         container = self.get_container("spatialist_anchors")

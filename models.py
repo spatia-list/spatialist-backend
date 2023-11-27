@@ -12,6 +12,7 @@ CONNECTION SETTINGS
 
 CNX = Connector()
 
+
 @dataclass
 class Quaternion:
     x: float
@@ -33,6 +34,7 @@ class Quaternion:
     def __repr__(self):
         return self.__str__()
 
+
 @dataclass
 class Vector3:
     x: float
@@ -52,6 +54,7 @@ class Vector3:
     def __repr__(self):
         return self.__str__()
 
+
 @dataclass
 class Pose:
     position: Vector3
@@ -69,6 +72,7 @@ class Pose:
     def __repr__(self):
         return self.__str__()
 
+
 class PostIt:
     """
     A post-it note
@@ -79,40 +83,29 @@ class PostIt:
     anchor_id: str = ""
     owner: str = ""
     title: str = ""
-    type: str = ""
-    text_content: str = ""
-    media_content: str = ""
+    content_type: str = ""
+    content: str = ""
     rgb = None
     pose: Pose = None
 
-    def __init__(self, anchor_id, owner, title, type, pose, text_content='', media_content='', rgb=None):
+    def __init__(self, owner, title, content_type, anchor_id="", pose=None, content='', rgb=None):
         self.id = uid().hex
         self.anchor_id = anchor_id
         self.owner = owner
         self.title = title
-        self.type = type
-        self.text_content = text_content
-        self.media_content = media_content
+        self.content_type = content_type
+        self.content = content
         self.rgb = rgb
         self.pose = pose
 
     def check(self):
-        if not self.anchor_id:
-            raise Exception("anchor_id is required")
         if not self.owner:
             raise Exception("owner is required")
-        if not self.title:
-            raise Exception("title is required")
-        if not self.type:
+        if not self.content_type:
             raise Exception("type is required")
 
-        if self.type != "text" and self.type != "media":
-            raise Exception("type must be either text or media, got: " + self.type)
-
-        if self.type == "text" and not self.text_content:
-            raise Exception("text_content is required for text type")
-        if self.type == "media" and not self.media_content:
-            raise Exception("media_content is required for media type")
+        if self.content_type != "text" and self.content_type != "media":
+            raise Exception("type must be either text or media, got: " + self.content_type)
 
         if self.rgb:
             # check that we have 3 values
@@ -139,9 +132,8 @@ class PostIt:
             "anchor_id": self.anchor_id,
             "owner": self.owner,
             "title": self.title,
-            "type": self.type,
-            "text_content": self.text_content,
-            "media_content": self.media_content,
+            "content_type": self.content_type,
+            "content": self.content,
             "rgb": self.rgb,
             "pose": self.pose.serialize() if self.pose else None
         }
@@ -150,13 +142,13 @@ class PostIt:
     def __str__(self):
         return json.dumps(self.serialize())
 
+
 class PostItJSON(BaseModel):
     anchor_id: str = ""
     owner: str = ""
     title: str = ""
-    type: str = ""
-    text_content: str = ""
-    media_content: str = ""
+    content_type: str = ""
+    content: str = ""
     scale: float = 1.0
     rgb: list | None = [0, 255, 255]
     position: list | None = [0.0, 0.0, 0.0]
@@ -180,11 +172,25 @@ class PostItJSON(BaseModel):
             anchor_id=self.anchor_id,
             owner=self.owner,
             title=self.title,
-            type=self.type,
-            text_content=self.text_content,
-            media_content=self.media_content,
+            content_type=self.content_type,
+            content=self.text_content,
             rgb=self.rgb,
             pose=pose
+        )
+
+
+class SwipeJSON(BaseModel):
+    username: str = ""
+    content_type: str = ""
+    title: str = ""
+    content: str = ""
+
+    def deserialize(self):
+        return PostIt(
+            owner=self.username,
+            title=self.title,
+            content_type=self.content_type,
+            content=self.content
         )
 
 
@@ -225,6 +231,7 @@ class UserGroupJoinJSON(BaseModel):
 
         return group
 
+
 class LocalAnchor:
     """
     A local anchor
@@ -263,6 +270,7 @@ class LocalAnchor:
     def __str__(self):
         return json.dumps(self.serialize())
 
+
 class LocalAnchorJSON(BaseModel):
     anchor_id: str = ""
     owner: str = ""
@@ -272,5 +280,3 @@ class LocalAnchorJSON(BaseModel):
             anchor_id=self.anchor_id,
             owner=self.owner
         )
-
-
