@@ -111,8 +111,9 @@ class Connector:
 
         container = self.get_container("spatialist_anchors")
         # get all items
+        print(group_name)
         res = container.query_items(
-            query="SELECT * FROM c WHERE c.owner = " + group_name,
+            query=f"SELECT * FROM c WHERE c.owner = '{group_name}'",
             enable_cross_partition_query=True
         )
 
