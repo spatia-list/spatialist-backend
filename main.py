@@ -125,6 +125,11 @@ async def get_anchors_by_group(group_name: str):
     return {"anchors": anchors}
 
 
+@app.delete("/anchors")
+async def delete_anchors():
+    CNX.remove_all_anchors()
+    return {"message": "All anchors deleted"}
+
 """
 GET /currentHash
 """

@@ -161,3 +161,14 @@ class Connector:
         sha256.update(json.dumps(res).encode("utf-8"))
         return sha256.hexdigest()
 
+
+    def remove_all_anchors(self):
+        container = self.get_container("spatialist_anchors")
+        res = container.query_items(
+            query="SELECT * FROM c",
+            enable_cross_partition_query=True
+        )
+        res = list(res)
+        for item in res:
+            container.delete_item(item, partition_key=item["owner"])
+
