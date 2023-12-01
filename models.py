@@ -88,8 +88,11 @@ class PostIt:
     rgb = None
     pose: Pose = None
 
-    def __init__(self, owner, title, content_type, anchor_id="", pose=None, content='', rgb=None):
-        self.id = uid().hex
+    def __init__(self, owner, title, content_type, id=None, anchor_id="", pose=None, content='', rgb=None):
+        if id:
+            self.id = id
+        else:
+            self.id = uid().hex
         self.anchor_id = anchor_id
         self.owner = owner
         self.title = title
@@ -123,7 +126,19 @@ class PostIt:
 
     def save(self):
         self.check()
-        CNX.create_item(self)
+
+        # Query the database to see if the postit already exists
+        container = CNX.get_container("spatialist_postits")
+        res = container.query_items(
+            query=f"SELECT * FROM c WHERE c.id = '{self.id}'",
+            enable_cross_partition_query=True
+        )
+        res = list(res)
+        if len(res) > 0:
+            # Update the existing postit
+            container.replace_item(res[0]["id"], self.serialize())
+        else:
+            CNX.create_item(self)
         return self
 
     def serialize(self):
@@ -144,6 +159,7 @@ class PostIt:
 
 
 class PostItJSON(BaseModel):
+    id: str = ""
     anchor_id: str = ""
     owner: str = ""
     title: str = ""
@@ -169,6 +185,7 @@ class PostItJSON(BaseModel):
             )
         )
         return PostIt(
+            id=self.id,
             anchor_id=self.anchor_id,
             owner=self.owner,
             title=self.title,
