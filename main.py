@@ -65,6 +65,14 @@ async def delete_postit(id: str):
     return {"message": "PostIt deleted"}
 
 
+@app.delete("/postits")
+async def delete_postits():
+    try:
+        CNX.remove_all_postits()
+    except Exception as e:
+        return {"message": "PostIts not deleted::" + str(e)}
+    return {"message": "All postits deleted"}
+
 """
 POST /joingroup
 """

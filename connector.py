@@ -172,3 +172,12 @@ class Connector:
         for item in res:
             container.delete_item(item, partition_key=item["owner"])
 
+    def remove_all_postits(self):
+        container = self.get_container("spatialist_postits")
+        res = container.query_items(
+            query="SELECT * FROM c",
+            enable_cross_partition_query=True
+        )
+        res = list(res)
+        for item in res:
+            container.delete_item(item, partition_key=item["owner"])

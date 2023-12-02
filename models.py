@@ -13,57 +13,16 @@ CONNECTION SETTINGS
 CNX = Connector()
 
 
-@dataclass
-class Quaternion:
-    x: float
-    y: float
-    z: float
-    w: float
-
-    def serialize(self):
-        return {
-            "w": self.w,
-            "x": self.x,
-            "y": self.y,
-            "z": self.z
-        }
-
-    def __str__(self):
-        return json.dumps(self.serialize())
-
-    def __repr__(self):
-        return self.__str__()
-
-
-@dataclass
-class Vector3:
-    x: float
-    y: float
-    z: float
-
-    def serialize(self):
-        return {
-            "x": self.x,
-            "y": self.y,
-            "z": self.z
-        }
-
-    def __str__(self):
-        return json.dumps(self.serialize())
-
-    def __repr__(self):
-        return self.__str__()
-
 
 @dataclass
 class Pose:
-    position: Vector3
-    orientation: Quaternion
+    position: list
+    orientation: list
 
     def serialize(self):
         return {
-            "position": self.position.serialize(),
-            "orientation": self.orientation.serialize()
+            "position": self.position,
+            "orientation": self.orientation
         }
 
     def __str__(self):
@@ -168,21 +127,12 @@ class PostItJSON(BaseModel):
     scale: float = 1.0
     rgb: list | None = [0, 255, 255]
     position: list | None = [0.0, 0.0, 0.0]
-    rotation: list | None = [0.0, 0.0, 0.0, 1.0]
+    rotation: list | None = [1.0, 0.0, 0.0, 0.0]
 
     def deserialize(self):
         pose = Pose(
-            position=Vector3(
-                x=self.position[0],
-                y=self.position[1],
-                z=self.position[2]
-            ),
-            orientation=Quaternion(
-                x=self.rotation[0],
-                y=self.rotation[1],
-                z=self.rotation[2],
-                w=self.rotation[3]
-            )
+            position=self.position,
+            orientation=self.rotation
         )
         return PostIt(
             id=self.id,
