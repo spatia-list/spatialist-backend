@@ -46,8 +46,9 @@ class PostIt:
     content: str = ""
     rgb = None
     pose: Pose = None
+    scale: float = 1.0
 
-    def __init__(self, owner, title, content_type, id=None, anchor_id="", pose=None, content='', rgb=None):
+    def __init__(self, owner, title, content_type, id=None, anchor_id="", pose=None, content='', rgb=None, scale=1.0):
         if id:
             self.id = id
         else:
@@ -59,6 +60,7 @@ class PostIt:
         self.content = content
         self.rgb = rgb
         self.pose = pose
+        self.scale = scale
 
     def check(self):
         if not self.owner:
@@ -109,7 +111,8 @@ class PostIt:
             "content_type": self.content_type,
             "content": self.content,
             "rgb": self.rgb,
-            "pose": self.pose.serialize() if self.pose else None
+            "pose": self.pose.serialize() if self.pose else None,
+            "scale": self.scale
         }
         return item
 
@@ -127,6 +130,7 @@ class PostItJSON(BaseModel):
     scale: float = 1.0
     rgb: list | None = [0, 255, 255]
     pose: Pose | None = None
+    scale: float = 1.0
 
     def deserialize(self):
         return PostIt(
@@ -137,7 +141,8 @@ class PostItJSON(BaseModel):
             content_type=self.content_type,
             content=self.content,
             rgb=self.rgb,
-            pose=self.pose
+            pose=self.pose,
+            scale=self.scale
         )
 
 
