@@ -126,14 +126,9 @@ class PostItJSON(BaseModel):
     content: str = ""
     scale: float = 1.0
     rgb: list | None = [0, 255, 255]
-    position: list | None = [0.0, 0.0, 0.0]
-    rotation: list | None = [1.0, 0.0, 0.0, 0.0]
+    pose: Pose | None = None
 
     def deserialize(self):
-        pose = Pose(
-            position=self.position,
-            orientation=self.rotation
-        )
         return PostIt(
             id=self.id,
             anchor_id=self.anchor_id,
@@ -142,7 +137,7 @@ class PostItJSON(BaseModel):
             content_type=self.content_type,
             content=self.content,
             rgb=self.rgb,
-            pose=pose
+            pose=self.pose
         )
 
 
