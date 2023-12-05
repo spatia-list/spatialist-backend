@@ -13,7 +13,6 @@ CONNECTION SETTINGS
 CNX = Connector()
 
 
-
 @dataclass
 class Pose:
     position: list
@@ -46,9 +45,9 @@ class PostIt:
     content: str = ""
     rgb = None
     pose: Pose = None
-    scale: float = 1.0
+    scale: list = [1.0, 1.0, 1.0]
 
-    def __init__(self, owner, title, content_type, id=None, anchor_id="", pose=None, content='', rgb=None, scale=1.0):
+    def __init__(self, owner, title, content_type, id=None, anchor_id="", pose=None, content='', rgb=None, scale=None):
         if id:
             self.id = id
         else:
@@ -60,7 +59,8 @@ class PostIt:
         self.content = content
         self.rgb = rgb
         self.pose = pose
-        self.scale = scale
+        if scale:
+            self.scale = scale
 
     def check(self):
         if not self.owner:
@@ -127,10 +127,9 @@ class PostItJSON(BaseModel):
     title: str = ""
     content_type: str = ""
     content: str = ""
-    scale: float = 1.0
     rgb: list | None = [0, 255, 255]
     pose: Pose | None = None
-    scale: float = 1.0
+    scale: list | None = [1.0, 1.0, 1.0]
 
     def deserialize(self):
         return PostIt(
