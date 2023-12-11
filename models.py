@@ -80,10 +80,10 @@ class PostIt:
             for val in self.rgb:
                 if not isinstance(val, int):
                     raise Exception("rgb values must be integers")
-                if val < 0 or val > 255:
-                    raise Exception("rgb values must be between 0 and 255")
+                if val < 0 or val > 1:
+                    raise Exception("rgb values must be between 0 and 1")
         else:
-            self.rgb = [0, 255, 255]
+            self.rgb = [0.0, 1.0, 1.0]
 
     def save(self):
         self.check()
@@ -127,7 +127,7 @@ class PostItJSON(BaseModel):
     title: str = ""
     content_type: str = ""
     content: str = ""
-    rgb: list | None = [0, 255, 255]
+    rgb: list | None = [0.0, 1.0, 1.0]
     pose: Pose | None = None
     scale: list | None = [1.0, 1.0, 1.0]
 
