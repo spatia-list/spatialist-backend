@@ -94,7 +94,7 @@ async def get_groups():
     groups = CNX.get_groups()
     return {"groups": groups}
 
-@app.delete("group/{name}")
+@app.delete("/group/{name}")
 async def delete_group(name: str):
     CNX.delete_group(name)
     return {"message": "Group deleted"}
