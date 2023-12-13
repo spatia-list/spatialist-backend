@@ -43,11 +43,11 @@ class PostIt:
     title: str = ""
     content_type: str = ""
     content: str = ""
-    rgb = None
+    color = str
     pose: Pose = None
     scale: list = [1.0, 1.0, 1.0]
 
-    def __init__(self, owner, title, content_type, id=None, anchor_id="", pose=None, content='', rgb=None, scale=None):
+    def __init__(self, owner, title, content_type, id=None, anchor_id="", pose=None, content='', color="yellow", scale=None):
         if id:
             self.id = id
         else:
@@ -57,7 +57,7 @@ class PostIt:
         self.title = title
         self.content_type = content_type
         self.content = content
-        self.rgb = rgb
+        self.color = color
         self.pose = pose
         if scale:
             self.scale = scale
@@ -70,20 +70,6 @@ class PostIt:
 
         if self.content_type != "text" and self.content_type != "media":
             raise Exception("type must be either text or media, got: " + self.content_type)
-
-        if self.rgb:
-            # check that we have 3 values
-            if len(self.rgb) != 3:
-                raise Exception("rgb must be an array of 3 values")
-
-            # check that each value is an integer between 0 and 255
-            for val in self.rgb:
-                if not isinstance(val, int):
-                    raise Exception("rgb values must be integers")
-                if val < 0 or val > 1:
-                    raise Exception("rgb values must be between 0 and 1")
-        else:
-            self.rgb = [0.0, 1.0, 1.0]
 
     def save(self):
         self.check()
@@ -110,7 +96,7 @@ class PostIt:
             "title": self.title,
             "content_type": self.content_type,
             "content": self.content,
-            "rgb": self.rgb,
+            "color": self.color,
             "pose": self.pose.serialize() if self.pose else None,
             "scale": self.scale
         }
@@ -127,7 +113,7 @@ class PostItJSON(BaseModel):
     title: str = ""
     content_type: str = ""
     content: str = ""
-    rgb: list | None = [0.0, 1.0, 1.0]
+    color: str = "yellow"
     pose: Pose | None = None
     scale: list | None = [1.0, 1.0, 1.0]
 
@@ -139,7 +125,7 @@ class PostItJSON(BaseModel):
             title=self.title,
             content_type=self.content_type,
             content=self.content,
-            rgb=self.rgb,
+            color=self.color,
             pose=self.pose,
             scale=self.scale
         )
