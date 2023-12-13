@@ -181,3 +181,13 @@ class Connector:
         res = list(res)
         for item in res:
             container.delete_item(item, partition_key=item["owner"])
+
+    def delete_group(self, group_name):
+        container = self.get_container("spatialist_organizations")
+        res = container.query_items(
+            query=f"SELECT * FROM c WHERE c.name = '{group_name}'",
+            enable_cross_partition_query=True
+        )
+        res = list(res)
+        for item in res:
+            container.delete_item(item, partition_key=item["name"])
