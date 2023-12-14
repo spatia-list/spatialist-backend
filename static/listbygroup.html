@@ -45,11 +45,11 @@
             <a href="/list" class="block inline-block mt-0 text-teal-200 hover:text-white mr-4 text-lg">
                 List
             </a>
-          </div>
 
-          <a href="/listbygroup" class="block inline-block mt-0 text-teal-200 hover:text-white mr-4 text-lg">
-            List by Group
-          </a>
+            <a href="/listbygroup" class="block inline-block mt-0 text-teal-200 hover:text-white mr-4 text-lg">
+                List by Group
+            </a>
+          </div>
 
           <div class="flex items-center justify-end">
             <a href="https://github.com/spatia-list/spatialist-backend" class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-0">Github</a>
@@ -60,10 +60,10 @@
     <div class="p-4">
         <form class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div class="mb-4">
-            <label class="block text-gray-100 text-md font-bold mb-2" for="username">
-              Username
+            <label class="block text-gray-100 text-md font-bold mb-2" for="group_name">
+              Group Name
             </label>
-            <input id="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter username">
+            <input id="group_name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Enter group name">
           </div>
 
           <button id="showPostItsBtn" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
@@ -76,7 +76,7 @@
     <div class="p-4">
         <form class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <div class="mb-4">
-                <label class="block text-gray-100 text-md font-bold mb-2" for="username">
+                <label class="block text-gray-100 text-md font-bold mb-2" for="group_name">
                   Available Post-its
                 </label>
             </div>
@@ -94,12 +94,12 @@
 
         // Function to handle button click event
         const loadList = async () => {
-            localStorage.setItem("username", document.getElementById("username").value);
+            localStorage.setItem("group_name", document.getElementById("group_name").value);
 
             try {
-                const username = document.getElementById('username').value.trim();
-                if (!username) {
-                    throw new Error('No username!');
+                const group_name = document.getElementById('group_name').value.trim();
+                if (!group_name) {
+                    throw new Error('No group name!');
                 }
 
                 // Make a GET request to fetch post-its
@@ -121,7 +121,7 @@
                 const groupData = await responseGroups.json();
                 const groups = groupData['groups'];
 
-                let message = `You got all the postits for user ${username}:`;
+                let message = `You got all the postits for room ${group_name}:`;
 
                 const mainElement = document.getElementById('main');
                 mainElement.textContent = message;
@@ -137,24 +137,21 @@
                     const postit_anchor_id = postit.anchor_id;
                     group_name_postit = "None";
 
-                    for (const group of groups) {
-                        const group_name = group.group_name;
-                        // Make a GET request to fetch all anchors for a group
-                        const responseAnchors = await fetch(`/anchors/` + group_name);
-                        if (!responseAnchors.ok) {
-                            throw new Error('Failed to fetch anchors');
-                        }
-                        const anchorData = await responseAnchors.json();
-                        const anchors = anchorData['anchors'];
+                    // Make a GET request to fetch all anchors for a group
+                    const responseAnchors = await fetch(`/anchors/` + group_name);
+                    if (!responseAnchors.ok) {
+                        throw new Error('Failed to fetch anchors');
+                    }
+                    const anchorData = await responseAnchors.json();
+                    const anchors = anchorData['anchors'];
 
-                        for (const anchor of anchors) {
-                            if (anchor.anchor_id === postit_anchor_id) {
-                                group_name_postit = anchor.owner;
-                            }
+                    for (const anchor of anchors) {
+                        if (anchor.anchor_id === postit_anchor_id) {
+                            group_name_postit = anchor.owner;
                         }
                     }
 
-                    if (postit.owner === username) {
+                    if (group_name_postit === group_name) {
                         const postitContainer = document.createElement('div');
 
                         if(postit.color === "red")
@@ -176,6 +173,7 @@
                         postitContainer.classList.add('shadow-md');
                         
                         postitContainer.innerHTML = `
+                        <span class="text-lg font-bold">Username: ${postit.owner}</span> <br><br>
                         <span class="text-lg font-bold">Group Name: ${group_name_postit}</span> <br><br>
                         <span class="text-lg font-bold">Title: ${postit.title}</span> <br><br>
                         <span class="text-lg font-bold">Content:</span> <br><br>
@@ -195,9 +193,9 @@
         };
 
         // fetch username from local storage
-        const username = localStorage.getItem("username");
-        if (username) {
-          document.getElementById("username").value = username;
+        const group_name = localStorage.getItem("group_name");
+        if (group_name) {
+          document.getElementById("group_name").value = group_name;
           loadList();
         }
 

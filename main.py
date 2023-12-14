@@ -22,6 +22,10 @@ async def root():
 async def root():
     return FileResponse('static/list.html')
 
+@app.get("/listbygroup")
+async def root():
+    return FileResponse('static/listbygroup.html')
+
 @app.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
