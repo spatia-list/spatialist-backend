@@ -112,14 +112,14 @@
                 const postits = data['postits'];
                 //console.log(postits);
 
-                // Make a GET request to fetch all groups
-                const responseGroups = await fetch(`/groups`);
-                if (!responseGroups.ok) {
-                    throw new Error('Failed to fetch groups');
-                }
+                // // Make a GET request to fetch all groups
+                // const responseGroups = await fetch(`/groups`);
+                // if (!responseGroups.ok) {
+                //     throw new Error('Failed to fetch groups');
+                // }
 
-                const groupData = await responseGroups.json();
-                const groups = groupData['groups'];
+                // const groupData = await responseGroups.json();
+                // const groups = groupData['groups'];
 
                 let message = `You got all the postits for user ${username}:`;
 
@@ -134,25 +134,25 @@
                 // Iterate through postits
                 for (const postit of postits) {
 
-                    const postit_anchor_id = postit.anchor_id;
-                    group_name_postit = "None";
+                    // const postit_anchor_id = postit.anchor_id;
+                    // group_name_postit = "None";
 
-                    for (const group of groups) {
-                        const group_name = group.group_name;
-                        // Make a GET request to fetch all anchors for a group
-                        const responseAnchors = await fetch(`/anchors/` + group_name);
-                        if (!responseAnchors.ok) {
-                            throw new Error('Failed to fetch anchors');
-                        }
-                        const anchorData = await responseAnchors.json();
-                        const anchors = anchorData['anchors'];
+                    // for (const group of groups) {
+                    //     const group_name = group.group_name;
+                    //     // Make a GET request to fetch all anchors for a group
+                    //     const responseAnchors = await fetch(`/anchors/` + group_name);
+                    //     if (!responseAnchors.ok) {
+                    //         throw new Error('Failed to fetch anchors');
+                    //     }
+                    //     const anchorData = await responseAnchors.json();
+                    //     const anchors = anchorData['anchors'];
 
-                        for (const anchor of anchors) {
-                            if (anchor.anchor_id === postit_anchor_id) {
-                                group_name_postit = anchor.owner;
-                            }
-                        }
-                    }
+                    //     for (const anchor of anchors) {
+                    //         if (anchor.anchor_id === postit_anchor_id) {
+                    //             group_name_postit = anchor.owner;
+                    //         }
+                    //     }
+                    // }
 
                     if (postit.owner === username) {
                         const postitContainer = document.createElement('div');
@@ -176,7 +176,6 @@
                         postitContainer.classList.add('shadow-md');
                         
                         postitContainer.innerHTML = `
-                        <span class="text-lg font-bold">Group Name: ${group_name_postit}</span> <br><br>
                         <span class="text-lg font-bold">Title: ${postit.title}</span> <br><br>
                         <span class="text-lg font-bold">Content:</span> <br><br>
                         <div class="overflow-auto">
