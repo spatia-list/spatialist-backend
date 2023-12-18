@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from models import *
 from fastapi.staticfiles import StaticFiles
-from starlette.responses import FileResponse
+from starlette.responses import FileResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
@@ -76,6 +76,11 @@ async def delete_postits():
     except Exception as e:
         return {"message": "PostIts not deleted::" + str(e)}
     return {"message": "All postits deleted"}
+
+@app.get("/redirect")
+async def redirect():
+    response = RedirectResponse(url='/static/poster.html')
+    return response
 
 """
 POST /joingroup
