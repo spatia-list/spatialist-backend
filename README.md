@@ -1,4 +1,6 @@
 # Spatialist Backend
+## This is the backend system of the SpatiaList project
+# [Main repository](https://github.com/spatia-list/spatialist)
 
 ### Quickstart
 
